@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>Цикличное видео на заднем фоне</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #video-background {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+        #video-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+        }
+        #video-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="video-background">
+        <div id="video-container">
+            <div id="video-overlay"></div>
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/J-Kr_Y8v2yY?autoplay=1&loop=1&controls=0&showinfo=0&modestbranding=1&playlist=J-Kr_Y8v2yY" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    
+    <!-- Вставьте J-Kr_Y8v2yY ниже в двух местах в коде выше -->
+    <script>
+        var videoId = "J-Kr_Y8v2yY";
+        var videoContainer = document.getElementById("video-container");
+        
+        videoContainer.addEventListener("click", function() {
+            if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (videoContainer.mozRequestFullScreen) { // поддержка Firefox
+                videoContainer.mozRequestFullScreen();
+            } else if (videoContainer.webkitRequestFullscreen) { // поддержка Chrome, Safari и Opera
+                videoContainer.webkitRequestFullscreen();
+            } else if (videoContainer.msRequestFullscreen) { // поддержка IE/Edge
+                videoContainer.msRequestFullscreen();
+            }
+        });
+        
+        function onYouTubeIframeAPIReady() {
+            var player;
+            player = new YT.Player("video-container", {
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    loop: 1,
+                    controls: 0,
+                    showinfo: 0,
+                    modestbranding: 1,
+                    playlist: videoId
+                },
+                events: {
+                    onReady: function(event) {
+                        event.target.mute();
+                    }
+                }
+            });
+        }
+    </script>
+    
+    <!-- Вставьте код ниже в тег <body> вашей веб-страницы -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
