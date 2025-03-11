@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Автоматический Слайдер</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: black;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.slide img, .slide iframe {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.slide iframe {
+  border: none;
+}
+
+.active {
+  opacity: 1;
+}
+
+#pause {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: black;
+  z-index: 100;
+}
+</style>
+</head>
+<body>
+
+<div class="slide" id="slide1">
+  <img src="" alt="Картинка 1">
+</div>
+
+<div id="pause"></div>
+
+<div class="slide" id="slide2">
+  <iframe id="mediaDeliveryIframe" src="https://iframe.mediadelivery.net/play/394603/cded029f-6ed1-4f28-a5a3-0d2aab596487"
+          frameborder="0"
+          allowfullscreen
+          allow="autoplay">
+  </iframe>
+</div>
+
+<div id="pause"></div>
+
+<div class="slide" id="slide3">
+  <img src="" alt="Картинка 2">
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const pauseDiv = document.getElementById('pause');
+let currentSlide = 0;
+let timeout;
+
+function showSlide(index) {
+  slides.forEach(slide => slide.classList.remove('active'));
+  pauseDiv.style.display = 'none';
+
+  if (index < slides.length) {
+    slides[index].classList.add('active');
+  }
+
+  // После активации слайда с iframe пробуем запустить видео
+  if (index === 1) {
+      tryToPlayIframeVideo();
+  }
+}
+
+function nextSlide() {
+  currentSlide = (currentSlide + 1) % slides.length;
+  showSlide(currentSlide);
+
+  let delay;
+  if (currentSlide === 1) {
+    delay = 2500;
+  } else if (currentSlide === 0 || currentSlide === 2) {
+    delay = 15000;
+  } else {
+    delay = 3000; // Предполагаем, что pauseDiv тоже слайд
+  }
+
+  timeout = setTimeout(nextSlide, delay);
+}
+
+function tryToPlayIframeVideo() {
+    const iframe = document.getElementById('mediaDeliveryIframe');
+
+    if (iframe) {
+        // Отправляем сообщение "play" в iframe (может потребоваться другой формат)
+        iframe.contentWindow.postMessage('play', '*');
+
+        // Альтернативный вариант: попробуем выполнить функцию play() напрямую (если она есть)
+        try {
+            iframe.contentWindow.play();
+        } catch (e) {
+            console.warn("Не удалось запустить видео через iframe.contentWindow.play():", e);
+        }
+    }
+}
+
+showSlide(currentSlide);
+timeout = setTimeout(nextSlide, 1500); // Первый слайд - картинка
+</script>
+
+</body>
+</html>
